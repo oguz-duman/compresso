@@ -1,1 +1,1 @@
-# A Simple Hex Editor
+# GUI Dased Data Compression Lab 
