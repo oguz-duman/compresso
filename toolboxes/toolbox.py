@@ -18,26 +18,20 @@ class Toolbox(QWidget):
 
         self.contentLayout = QVBoxLayout()              # create a layout to hold the content of the toolbox
 
-        self.set_parent(self.contentLayout)             # set the parent layout for the toolbox
-        self.set_update_trigger(self.updateTrigger)     # set the update trigger for the toolbox
-
-        self.title = title                      # set the title of the toolbox
-        self.id = str(uuid.uuid4())             # generate a unique id for the toolbox
-        self.initiate_ui()                      # set up the UI
+        self.title = title                      
+        self.id = str(uuid.uuid4())             
+        self.initiate_ui()                      
 
 
     def initiate_ui(self):
-        self.setFixedWidth(200)             # make the widget fixed size
+        self.setFixedWidth(200)             
         
-        # set a font size variable
         self.font = QFont()              
         self.font.setPointSize(10)  
 
-        # set the layout for the widget
         mainLayout = QVBoxLayout(self) 
         mainLayout.setContentsMargins(0, 0, 0, 0)
 
-        # create a frame to hold the content
         frame = QFrame()
         frame.setFrameShape(QFrame.StyledPanel)
         frame.setStyleSheet("QFrame#Frame { border: 2px solid gray; border-radius: 10px; }")
@@ -46,7 +40,6 @@ class Toolbox(QWidget):
         frame.setFixedWidth(200)
         mainLayout.addWidget(frame)     
 
-        # create a layout inside the frame
         frameLayout = QVBoxLayout(frame)
         frameLayout.setContentsMargins(10, 10, 10, 10)
 
@@ -87,11 +80,6 @@ class Toolbox(QWidget):
         dummy.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.contentLayout.addWidget(dummy)
     
-
-    def update_toolbox(self, imageBGRA):
-        """ Runs only when the toolbox is created for the first time and everytime the input image is changed. """
-        self.imageBGRA = imageBGRA
-
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

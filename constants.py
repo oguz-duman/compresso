@@ -14,38 +14,11 @@ CHANNELS_BUTTON = "Channels"
 FREQUENCY_BUTTON = "Frequency"
 SAVE_BUTTON = "Save"
 
-# add new toolbox list
+# add new toolbox list adn corresponding toolbox class names
 TOOLBOXES = {
-    "BRIGHTNESS": {
-        "NAME": "Brightness",
-        "CLASS": "BrightnessBox"
-    },
-
-    "SATURATION": {
-        "NAME": "Saturation",
-        "CLASS": "SaturationBox"
-    },
-
-    "CONTRAST": {
-        "NAME": "Contrast",
-        "CLASS": "ContrastBox"
+    "TO_HEX": {
+        "NAME": "Hex",
+        "CLASS": "ToHexToolBox"
     },
 }
-
-
-
-
-#---------------------------- old old old old old old old  -------------------------------------------
-
-
-# Visualization types and  available color channels for each visualization type.
-VISUALIZATION_TYPES = {"Image":["RGBA", "Red (RGBA)", "Green (RGBA)", "Blue (RGBA)", "Alpha (RGBA)", "Hue (HSV)", "Saturation (HSV)",
-                                    "Value (HSV)"],
-
-                        "Histogram": ["RGBA", "Red (RGBA)", "Green (RGBA)", "Blue (RGBA)", "Alpha (RGBA)", "Hue (HSV)", "Saturation (HSV)",
-                                    "Value (HSV)"],
-
-                        "Frequency": ["Red (RGBA)", "Green (RGBA)", "Blue (RGBA)", "Alpha (RGBA)", "Hue (HSV)", "Saturation (HSV)",
-                                    "Value (HSV)"]
-                        }
 

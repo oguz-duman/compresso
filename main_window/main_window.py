@@ -1,23 +1,29 @@
 from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QScrollArea, QTextEdit, QComboBox
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QFont
 
 import constants
 import colors
 
 from main_window.main_window_manager import MainWindowManager
+
 from toolboxes.toolbox_adder import ToolboxAdder
+from toolboxes.to_hex_toolbox import ToHexToolBox
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()  
+        
+        self.input_data = ""
+        self.output_data = ""
 
         # Create main layout
         self.main_layout = QVBoxLayout(self) 
         self.main_layout.setContentsMargins(*constants.MAIN_WINDOW_MARGINS) 
         self.main_layout.setSpacing(constants.MAIN_WINDOW_SPACING)
 
-        self.manager = MainWindowManager()
+        self.manager = MainWindowManager(self)
+        self.manager.update_signal.connect(self.update_ui)
 
         # init top, mid and bottom layouts
         self.init_top_layout()
@@ -30,7 +36,7 @@ class MainWindow(QWidget):
         top_layout = QHBoxLayout()
         self.main_layout.addLayout(top_layout, constants.VERTICAL_LAYOUT_RATIOS[0])  
 
-        # Lef Layout 
+        # Left Layout 
         left_layout = QVBoxLayout()
         left_layout.setContentsMargins(0, 0, 0, 0)
         left_layout.setSpacing(0)
@@ -43,8 +49,8 @@ class MainWindow(QWidget):
         self.left_title.hide()
 
         # Left Textedit
-        self.in_im_canvas = QTextEdit()  
-        left_layout.addWidget(self.in_im_canvas)
+        self.left_text = QTextEdit()  
+        left_layout.addWidget(self.left_text)
 
         # Right Layout
         right_layout = QVBoxLayout()
@@ -58,8 +64,8 @@ class MainWindow(QWidget):
         self.right_title.hide()
 
         # Right Textedit
-        self.out_im_canvas = QTextEdit()
-        right_layout.addWidget(self.out_im_canvas)
+        self.right_text = QTextEdit()
+        right_layout.addWidget(self.right_text)
 
 
     def init_midLayout(self):
@@ -137,7 +143,7 @@ class MainWindow(QWidget):
         # New Function
         self.add_new_box = ToolboxAdder()
         self.contentLayout.addWidget(self.add_new_box)
-        #self.add_new_box.trigger.connect(self.insert_toolbox)  # connect click event to 'add_new_toolbox' method
+        self.add_new_box.trigger.connect(self.insert_toolbox)  # connect click event to 'add_new_toolbox' method
 
         # drag and drop functionality
         contentWidget.setAcceptDrops(True)
@@ -147,5 +153,41 @@ class MainWindow(QWidget):
 
     def open_file(self):
         text = self.manager.open_file()
-        self.in_im_canvas.setText(text)
+        self.input_data = text
+        self.output_data = text
+        self.left_text.setText(text)
+        self.right_text.setText(text)
+
+
+    def insert_toolbox(self, toolbox_name):
+        # Create a new method box based on the selected method name
+        for toolbox in constants.TOOLBOXES.values():
+            if toolbox_name == toolbox['NAME']:
+                toolbox_class = globals()[toolbox['CLASS']]  
+                #toolbox_class = getattr(self, toolbox['CLASS'])  
+                new_toolbox = toolbox_class()  # create an instance of the toolbox class
+                break
+
+        # connect the toolbox signals
+        new_toolbox.updateTrigger.connect(self.manager.execute_pipeline)   
+        new_toolbox.removeTrigger.connect(self.remove_toolbox) 
+
+        self.manager.pipeline_add_step(new_toolbox)                  
+
+        # move special footer toolbox to the end of the scroll view
+        self.contentLayout.removeWidget(self.add_new_box)      
+        self.add_new_box.setParent(None)           
+        self.contentLayout.addWidget(new_toolbox)                 
+        self.contentLayout.addWidget(self.add_new_box)         
+
+
+    def remove_toolbox(self):
+        print("remove")
+        pass
+
+    @Slot(str)
+    def update_ui(self, data):
+        self.output_data = data
+        self.right_text.setText(self.output_data)
+
 
