@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QFileDialog, QMessageBox
+from PySide6.QtWidgets import QFileDialog, QMessageBox, QDialog
 from PySide6.QtCore import QObject, Signal
+from ui_components.encoding_dialog import EncodingDialog
 
 class MainWindowManager(QObject):
     update_signal = Signal(str)
@@ -11,21 +12,35 @@ class MainWindowManager(QObject):
 
 
     def open_file(self):
+        # open a dialog to select encoding
+        dialog = EncodingDialog()
+        if dialog.exec() == QDialog.Accepted:
+            encoding = dialog.selected_encoding
+        else:
+            return  # canceled
+    
         filePath, _ = QFileDialog.getOpenFileName(None, "Select an input file")
 
         if filePath:
-            with open(filePath, "r") as f:
-                self.input_data = f.read()
-                return self.input_data
+            with open(filePath, "r", encoding=encoding) as f:
+                data = f.read()
+                return filePath, data
 
                 
     def save_file(self):
+        # open a dialog to select encoding
+        dialog = EncodingDialog()
+        if dialog.exec() == QDialog.Accepted:
+            encoding = dialog.selected_encoding
+        else:
+            return  # canceled
+        
         filePath, _ = QFileDialog.getSaveFileName(None, "Save the file")
         
         if filePath:
             try:
-                with open(filePath, "w") as f:
-                    f.write(self.output_data)
+                with open(filePath, "w", encoding=encoding) as f:
+                    f.write(self.main_window.output_data)
             except Exception as e:
                 QMessageBox.information(None, "Error", f"Failed to save the image.\n{str(e)}")
 

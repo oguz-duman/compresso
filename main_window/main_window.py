@@ -16,6 +16,7 @@ class MainWindow(QWidget):
         
         self.input_data = ""
         self.output_data = ""
+        self.input_filepath = ""
 
         # Create main layout
         self.main_layout = QVBoxLayout(self) 
@@ -50,6 +51,7 @@ class MainWindow(QWidget):
 
         # Left Textedit
         self.left_text = QTextEdit()  
+        self.left_text.textChanged.connect(self.on_input_text_changed)
         left_layout.addWidget(self.left_text)
 
         # Right Layout
@@ -65,6 +67,7 @@ class MainWindow(QWidget):
 
         # Right Textedit
         self.right_text = QTextEdit()
+        self.left_text.textChanged.connect(self.on_output_text_changed)
         right_layout.addWidget(self.right_text)
 
 
@@ -152,7 +155,7 @@ class MainWindow(QWidget):
 
 
     def open_file(self):
-        text = self.manager.open_file()
+        self.input_filepath, text = self.manager.open_file()
         self.input_data = text
         self.output_data = text
         self.left_text.setText(text)
@@ -191,3 +194,10 @@ class MainWindow(QWidget):
         self.right_text.setText(self.output_data)
 
 
+    def on_input_text_changed(self):
+        self.input_data = self.left_text.toPlainText()
+        self.manager.execute_pipeline()
+
+
+    def on_output_text_changed(self):
+        self.output_data = self.right_text.toPlainText()

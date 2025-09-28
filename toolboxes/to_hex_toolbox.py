@@ -7,5 +7,5 @@ class ToHexToolBox(Toolbox):
 
 
     def execute(self, data):
-        return data.encode("utf-8").hex()
+        return data.hex()
     
